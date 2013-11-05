@@ -1,0 +1,115 @@
+
+On UCSM system "sfo", list Service Profile names and associated blades
+
+[root@lodeve ucsql]# ucsql -s sfo -c "select dn, pnDn from lsServer"
+        dn      pnDn
+        --      ----
+        org-root/ls-STD
+        org-root/ls-ESXi        sys/chassis-1/blade-1
+        org-root/ls-SQL
+        org-root/ls-ESX
+        org-root/ls-STD-6
+        org-root/ls-STD-2
+        org-root/ls-STD-1
+        org-root/ls-ESX-8
+        org-root/ls-ESX-4
+        org-root/ls-ESX-3
+        org-root/ls-ESX-2
+        org-root/ls-ESX-1       sys/chassis-1/blade-4
+
+For a new UCS Central system ("ucsc"), list the Domain Groups
+
+[root@lodeve ucsql]# ucsql -s ucsc -c "select * from orgDomainGroup"
+system name or IP addr: 10.0.0.45
+login: admin
+Password:
+        dn      fltAggr name    descr   level
+        --      ------- ----    -----   -----
+        domaingroup-root        0       root            root
+        domaingroup-root/domaingroup-EUROPE     0       EUROPE          1
+        domaingroup-root/domaingroup-USA        0       USA             1
+
+For the existing UCS Central system ("ucsc"), list the timestamp and tftp URL for
+all the backup files, to be copied off from UCS Central
+
+[root@lodeve ucsql]# ucsql -s ucsc -c "select creationTS, tftpURL from configBackup"
+        creationTS      tftpURL
+        ----------      -------
+        1382740464000   tftp://10.0.0.45/ucs-central/cfg-backups/all-cfg.7
+        1382826924000   tftp://10.0.0.45/ucs-central/cfg-backups/all-cfg.6
+        1383086304000   tftp://10.0.0.45/ucs-central/cfg-backups/all-cfg.3
+        1381530339000   tftp://10.0.0.45/10.0.0.30/cfg-backups/all-cfg.21
+        1383086377000   tftp://10.0.0.45/10.0.0.30/cfg-backups/all-cfg.3
+        1382567686000   tftp://10.0.0.45/10.0.0.30/cfg-backups/all-cfg.9
+        1382827001000   tftp://10.0.0.45/10.0.0.30/cfg-backups/all-cfg.6
+        1382566968000   tftp://10.0.0.45/10.0.0.15/cfg-backups/all-cfg.9
+        1382653405000   tftp://10.0.0.45/10.0.0.15/cfg-backups/all-cfg.8
+                [...]
+
+For "ucsc", list all the connected domains.  "id" is the UCS Central internal identifier for UCSM domains
+
+[root@lodeve ucsql]# ucsql -s ucsc -c "select name, id, ip from extpolClient"
+        name    id      ip
+        ----    --      --
+        AMS     1007    10.0.0.30
+        SFO     1008    10.0.0.15
+
+
+For "ucsc" (UCS Central), list the global Fabric Interconnect inventory, including IP address, version and serial number
+(Note: "sys-xxxx" refers to the "id" from "extpolClient")
+
+[root@lodeve ucsql]# ucsql -s ucsc -c "select dn, oobIfIp, fwVersion, serial from networkElement"
+        dn      oobIfIp fwVersion       serial
+        --      ------- ---------       ------
+        sys/switch-A    10.0.0.45
+        compute/sys-1007/switch-A       10.0.0.31       5.0(3)N2(2.11.3a)       SSI16160DD5
+        compute/sys-1007/switch-B       10.0.0.32       5.0(3)N2(2.11.3a)       SSI16160DDF
+        compute/sys-1008/switch-A       10.0.0.14       5.0(3)N2(2.11.3a)       SSI13500AC2
+        compute/sys-1008/switch-B       10.0.0.16       5.0(3)N2(2.11.3a)       SSI130609WG
+
+For "ucsc" (UCS Central), list fields from the global chassis inventory, including serial#, thermal and power status
+(Note: "sys-xxxx" refers to the "id" from "extpolClient")
+
+[root@lodeve ucsql]# ucsql -s ucsc -c "select dn, serial, thermal, operState, power  from equipmentChassis"
+        dn      serial  thermal operState       power
+        --      ------  ------- ---------       -----
+        compute/sys-1007/chassis-1      FOX1307H0MP     ok      power-problem   redundancy-failed
+        compute/sys-1007/chassis-2      FOX1650GD9V     ok      power-problem   redundancy-failed
+        compute/sys-1008/chassis-1      FOX1308G2EW     ok      power-problem   redundancy-failed
+
+For "ucsc" (UCS Central), list fields from the global server inventory
+(Note: "sys-xxxx" refers to the "id" from "extpolClient")
+
+[root@lodeve ucsql]# ucsql -s ucsc -c "select dn, numOfCores, totalMemory, assignedToDn from computeBlade"
+        dn      numOfCores      totalMemory     assignedToDn
+        --      ----------      -----------     ------------
+        compute/sys-1007/chassis-2/blade-5      12      98304
+        compute/sys-1007/chassis-1/blade-5      16      32768
+        compute/sys-1007/chassis-2/blade-6      16      65536
+        compute/sys-1007/chassis-1/blade-6      12      98304
+        compute/sys-1007/chassis-2/blade-7      12      98304
+        compute/sys-1007/chassis-1/blade-7      16      32768   org-root/org-COKE/ls-SQL
+        compute/sys-1007/chassis-2/blade-8      12      98304
+        compute/sys-1008/chassis-1/blade-1      12      196608  org-root/ls-ESXi
+        compute/sys-1008/chassis-1/blade-4      20      262144  org-root/ls-ESX-1
+        compute/sys-1008/chassis-1/blade-6      12      49152
+        compute/sys-1008/chassis-1/blade-7      8       393216
+
+For the "sfo" domain, list all VHBA's and their WWPNs, possibly for SAN pre-provisioning
+
+[root@lodeve ucsql]# ucsql -s sfo -c "select dn, addr from vnicFc"
+        dn      addr
+        --      ----
+        org-root/ls-STD/fc-fc1  derived
+        org-root/ls-STD/fc-fc0  derived
+        org-root/ls-ESXi/fc-fc1 20:00:00:25:B5:3B:00:8F
+        org-root/ls-ESXi/fc-fc0 20:00:00:25:B5:3A:00:00
+        org-root/ls-SQL/fc-fc0  derived
+        org-root/ls-ESX/fc-fc1  derived
+        org-root/ls-ESX/fc-fc0  derived
+        org-root/ls-STD-6/fc-fc1        20:00:00:25:B5:3B:00:9F
+        org-root/ls-STD-6/fc-fc0        20:00:00:25:B5:3A:00:FF
+        org-root/ls-STD-2/fc-fc1        20:00:00:25:B5:3B:00:5F
+        org-root/ls-STD-2/fc-fc0        20:00:00:25:B5:3A:00:CF
+        org-root/ls-STD-1/fc-fc1        20:00:00:25:B5:3B:00:2F
+                [...]
