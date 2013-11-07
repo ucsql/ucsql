@@ -20,20 +20,6 @@ TMPDIR = "/tmp/ucsql.%s" % os.getpid()
 #
 # Make sure we have what we need
 #
-try:
-	import lxml
-	lxml_vers = pkg_resources.get_distribution("lxml").version
-	if lxml_vers != '3.2.3':
-		print
-		print "'ucsql' requires the 'lxml' package version 3.2.3,  not ", lxml_vers
-		print "Please download from http://lxml.de/files/lxml-3.2.3.tgz"
-		print
-		sys.exit(-1)
-except:
-	print
-	print "'ucsql' requires the 'lxml' package.   Please download from http://lxml.de"
-	print
-	sys.exit(-1)
 
 generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
 if generateDS == "":
