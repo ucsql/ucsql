@@ -29,7 +29,7 @@ Password:
         domaingroup-root/domaingroup-EUROPE     0       EUROPE          1
         domaingroup-root/domaingroup-USA        0       USA             1
 
-For the existing UCS Central system ("ucsc"), list the timestamp and tftp URL for
+For the existing UCS Central system ("ucsc"), list the timestamp and tftp URL for 
 all the backup files, to be copied off from UCS Central
 
 [root@lodeve ucsql]# ucsql -s ucsc -c "select creationTS, tftpURL from configBackup"
@@ -44,7 +44,7 @@ all the backup files, to be copied off from UCS Central
         1382827001000   tftp://10.0.0.45/10.0.0.30/cfg-backups/all-cfg.6
         1382566968000   tftp://10.0.0.45/10.0.0.15/cfg-backups/all-cfg.9
         1382653405000   tftp://10.0.0.45/10.0.0.15/cfg-backups/all-cfg.8
-                [...]
+		[...]
 
 For "ucsc", list all the connected domains.  "id" is the UCS Central internal identifier for UCSM domains
 
@@ -112,4 +112,4 @@ For the "sfo" domain, list all VHBA's and their WWPNs, possibly for SAN pre-prov
         org-root/ls-STD-2/fc-fc1        20:00:00:25:B5:3B:00:5F
         org-root/ls-STD-2/fc-fc0        20:00:00:25:B5:3A:00:CF
         org-root/ls-STD-1/fc-fc1        20:00:00:25:B5:3B:00:2F
-                [...]
+		[...]

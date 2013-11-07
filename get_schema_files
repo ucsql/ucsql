@@ -1,0 +1,79 @@
+#!/usr/local/bin/python
+#
+# Get Schema Files for ucsql
+#
+
+import os
+import sys
+import pkg_resources
+
+CWD = os.getcwd()
+SRCDIR = CWD + "/src/ucsql"
+CENTRAL_SCHEMA = "Schema-UCS_Central_1.1.1b"
+CENTRAL_TARBALL = "https://communities.cisco.com/servlet/JiveServlet/download/37092-3-55383/" + CENTRAL_SCHEMA + ".tar.gz"
+
+UCSM_SCHEMA = "Schema-2.1.3a"
+UCSM_TARBALL = "https://communities.cisco.com/servlet/JiveServlet/download/36350-4-55358/" + UCSM_SCHEMA + ".tar.gz"
+
+TMPDIR = "/tmp/ucsql.%s" % os.getpid()
+
+#
+# Make sure we have what we need
+#
+try:
+	import lxml
+	lxml_vers = pkg_resources.get_distribution("lxml").version
+	if lxml_vers != '3.2.3':
+		print
+		print "'ucsql' requires the 'lxml' package version 3.2.3,  not ", lxml_vers
+		print "Please download from http://lxml.de/files/lxml-3.2.3.tgz"
+		print
+		sys.exit(-1)
+except:
+	print
+	print "'ucsql' requires the 'lxml' package.   Please download from http://lxml.de"
+	print
+	sys.exit(-1)
+
+generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
+if generateDS == "":
+	print
+	print "'ucsql' requires the 'generateDS.py' package.   Please download from https://pypi.python.org/pypi/generateDS/"
+	print
+	sys.exit(-1)
+
+SCHEMA_NAME_MAP = {
+	"stats" : { "in" : CENTRAL_SCHEMA + "/stats-mgr.in.xsd", "out" : SRCDIR + "/stats.py"},
+	"idm" : { "in" : CENTRAL_SCHEMA + "/identifier-mgr.in.xsd", "out": SRCDIR + "/idm.py"},
+	"ops" : { "in" : CENTRAL_SCHEMA + "/operation-mgr.in.xsd", "out": SRCDIR + "/ops.py"},
+	"policy" : { "in" : CENTRAL_SCHEMA + "/policy-mgr.in.xsd", "out" : SRCDIR + "/policy.py"},
+	"service" : { "in" : CENTRAL_SCHEMA + "/service-reg.in.xsd", "out" : SRCDIR + "/service.py"},
+	"resource" : { "in" : CENTRAL_SCHEMA + "/resource-mgr.in.xsd", "out" : SRCDIR + "/resource.py"},
+	"ucsm" : { "in" : UCSM_SCHEMA + "/UCSM-IN.xsd", "out" : SRCDIR + "/ucsm.py" }
+}
+
+os.system ("mkdir %s" % TMPDIR)
+os.chdir(TMPDIR)
+os.system ("wget %s" % CENTRAL_TARBALL)
+os.system ("wget %s" % UCSM_TARBALL)
+os.system ("gunzip %s" % CENTRAL_SCHEMA + ".tar.gz")
+os.system ("tar xvf %s" % CENTRAL_SCHEMA + ".tar")
+os.system ("gunzip %s" % UCSM_SCHEMA + ".tar.gz")
+os.system ("tar xvf %s" % UCSM_SCHEMA + ".tar")
+
+print """
+
+Generating UCS DME Python classes from Schema files.
+Note:  This could take anywhere from 10 - 60 minutes depending on CPU and Memory,
+so please be patient (or find a bigger system).
+
+"""
+
+os.system ("mkdir -p %s" % SRCDIR)
+for s in SCHEMA_NAME_MAP.keys():
+	cmd = "python %s -o %s --member-specs=dict %s" % \
+			(generateDS, SCHEMA_NAME_MAP[s]["out"], SCHEMA_NAME_MAP[s]["in"])
+	print cmd
+	os.system (cmd)
+
+os.system ("rm -rf %s" % TMPDIR)
