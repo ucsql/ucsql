@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 #
 # ucsql : A simple SQL interface in to UCS DME (one or many).  
 #		  Intended to work against both/either UCSM or UCS Central.
