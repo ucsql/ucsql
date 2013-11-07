@@ -8,7 +8,7 @@ The 'ucsql' package has the following dependencies:
 
 To install the 'ucsql' package, please type "make all".
 
-Please refer to the LICSENSE.txt file for licensing.
+Please refer to the LICENSE.txt file for licensing.
 
 Please refer to the EXAMPLES.txt file for examples.
 
