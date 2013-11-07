@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import sys
 import os
-from distutils.core import setup
+from setuptools import setup
 
 name='ucsql'
 
@@ -38,4 +38,9 @@ setup(
 	namespace_packages=['ucsql'],
 	include_package_data = True,
 	zip_safe = False,
+	install_requires=[
+		"lxml >= 3.2.3",
+		"pyparsing >= 1.5.7",
+		"pycrypto >= 2.6.1",
+	]
 	)
