@@ -32,9 +32,9 @@ tmpdir = "/tmp/ucsql.%s" % os.getpid()
 #
 # Make sure 'lxml' version is 3.2.3 before trying to run 'generateDS' 
 #
-if pgk_resources.get_distribution('lxml').version != '3.2.3':
+if pkg_resources.get_distribution('lxml').version != '3.2.3':
 	print
-	print "'ucsql' requires 'lxml' version 3.2.3.   Please download from http://lxml.de"
+	print "'ucsql' requires 'lxml' version 3.2.3.   Please download from http://lxml.de/files/lxml-3.2.3.tgz"
 	print
 	sys.exit(-1)
 
