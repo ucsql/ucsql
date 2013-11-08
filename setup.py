@@ -77,7 +77,7 @@ for s in schema_name_map.keys():
 	cmd = "python %s -o %s --member-specs=dict %s" % \
 			(generateDS, schema_name_map[s]["out"], schema_name_map[s]["in"])
 	print cmd
-	# os.system (cmd)
+	os.system (cmd)
 
 os.system ("rm -rf %s" % tmpdir)
 os.chdir (cwd)
