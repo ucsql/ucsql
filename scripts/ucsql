@@ -40,15 +40,12 @@
 #	TODO:
 #		- overwrite/recreate session files
 #		- Improve Security and Sessions 
-#		- BSD/GPL License
-#		- setup.py, Packaging
 #		- output in csv/html format
 #		- Support "insert" commands
 #		- Support "update" commands
+#		- Support "delete" commands"
 #		- Support inhierarchical
 #		- 2 table joins
-#		-
-#		- github project
 #		- developer/community email alias (communities.cisco.com?)
 #		- bugzilla 
 #		- Common virtual interface for UCS Central DMEs and external stats database
@@ -233,18 +230,18 @@ class ucsqlGrammar:
 		    ( columnName + in_ + "(" + selectStmt + ")" ) |
 		    ( "(" + whereExpression + ")" )
 		    )
-		whereExpression << whereCondition + ZeroOrMore( ( and_ | or_ ) + whereExpression ) 
+		whereExpression <<= whereCondition + ZeroOrMore( ( and_ | or_ ) + whereExpression ) 
 		
 		# define the grammar
-		selectStmt      << ( selectToken + 
+		selectStmt      <<= ( selectToken + 
 		                   ( '*' | columnNameList ).setResultsName( "columns" ) + 
 		                   fromToken + 
 		                   tableNameList.setResultsName( "tables" ) + 
 		                   Optional( Group( CaselessLiteral("where") + whereExpression ), "" ).setResultsName("where") )
-		showStmt 		<< ( showToken  +
+		showStmt 		<<= ( showToken  +
 							 tableNameList.setResultsName( "tables" )) 
-		helpStmt		<< ( helpToken )
-# 		deleteStmt      << ( deleteToken +
+		helpStmt		<<= ( helpToken )
+# 		deleteStmt      <<= ( deleteToken +
 #                            fromToken +
 #                            tableNameList.setResultsName( "tables" ) +
 #                            Optional( Group( CaselessLiteral("where") + whereExpression ), "" ).setResultsName("where") )
@@ -312,7 +309,7 @@ def Format_Table(tblname, tbl):
 def ShowAll():
 	print "All Objects ..."
 	print "==================="
-	for module in UCSVDME:
+	for module in MH:
 		try:
 			m = sys.modules[module]
 			for name, obj in inspect.getmembers(m):
@@ -497,13 +494,13 @@ def main():
 	# Assumption :  The key name in UCSVDME is the same as the module name
 	#
 	UCSVDME = {
-		'ucsm':  connxstr + '/nuova',
-		'ops' :  connxstr + '/xmlIM/operation-mgr',
-		'policy' : connxstr + '/xmlIM/policy-mgr',
-	 	'idm'    : connxstr + '/xmlIM/identifier-mgr',
-		'stats'  : connxstr + '/xmlIM/stats-mgr',
-		'resource' : connxstr + '/xmlIM/resource-mgr',
-		'service'  : connxstr + '/xmlIM/service-reg'
+		'ucsql.ucsm':  connxstr + '/nuova',
+		'ucsql.ops' :  connxstr + '/xmlIM/operation-mgr',
+		'ucsql.policy' : connxstr + '/xmlIM/policy-mgr',
+	 	'ucsql.idm'    : connxstr + '/xmlIM/identifier-mgr',
+		'ucsql.stats'  : connxstr + '/xmlIM/stats-mgr',
+		'ucsql.resource' : connxstr + '/xmlIM/resource-mgr',
+		'ucsql.service'  : connxstr + '/xmlIM/service-reg'
 	}
 	
 	#
