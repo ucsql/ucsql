@@ -6,7 +6,7 @@ The 'ucsql' package has the following dependencies:
         - pycrypto >= 2.6.1     https://www.dlitz.net/software/pycrypto
         - generateDS >= 2.11a   http://www.rexx.com/~dkuhlman/generateDS.html
 
-To install the 'ucsql' package, please type "python setup.py install"
+To install the 'ucsql' package, please type "sudo python setup.py install"
 
 Please refer to the LICENSE.txt file for licensing.
 
