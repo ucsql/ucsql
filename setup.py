@@ -14,8 +14,12 @@
 
 import sys
 import os
+import glob
 import pkg_resources
-from setuptools import setup
+try:
+	from setuptools import setup
+except ImportError:
+	from distutils.core import setup
 
 name='ucsql'
 
@@ -29,19 +33,39 @@ ucsm_tarball = "https://communities.cisco.com/servlet/JiveServlet/download/36350
 
 tmpdir = "/tmp/ucsql.%s" % os.getpid()
 
+boogers = ['/usr/lib64/python2.*/site-packages/_xmlplus',
+	   '/usr/local/lib/python2.*/site-packages/_xmlplus',
+	   '/usr/local/lib/python2.*/dist-packages/_xmlplus',
+	   '/usr/lib/python2.*/site-packages/_xmlplus' ]
+
+for b in boogers:
+	if glob.glob(b):
+		print "The '_xmlplus' directory has been detected in : ", glob.glob(b)
+		print "This will unfortunately conflict with the 'lxml' package libraries"
+		print "If you can, please delete the %s directory, and then rerun this setup script" % glob.glob(b)
+		sys.exit(-1)
+
 #
 # Make sure 'lxml' version is 3.2.3 before trying to run 'generateDS' 
 #
 if pkg_resources.get_distribution('lxml').version != '3.2.3':
 	print
 	print "'ucsql' requires 'lxml' version 3.2.3.   Please download from http://lxml.de/files/lxml-3.2.3.tgz"
+	print "'ucsql' requires the 'generateDS.py' package.   Please download from https://pypi.python.org/pypi/generateDS/"
+	print 
+	print "If you have 'pip' installed, then you can simply run : "  
+	print "		'pip install lxml;  pip install generateDS'"
 	print
 	sys.exit(-1)
 
 generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
 if generateDS == "":
 	print
+	print "'ucsql' requires 'lxml' version 3.2.3.   Please download from http://lxml.de/files/lxml-3.2.3.tgz"
 	print "'ucsql' requires the 'generateDS.py' package.   Please download from https://pypi.python.org/pypi/generateDS/"
+	print
+	print "If you have 'pip' installed, then can simply run : "  
+	print "		'pip install lxml;  pip install generateDS'"
 	print
 	sys.exit(-1)
 
