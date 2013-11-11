@@ -83,10 +83,8 @@ os.system ("mkdir %s" % tmpdir)
 os.chdir(tmpdir)
 os.system ("wget %s" % central_tarball)
 os.system ("wget %s" % ucsm_tarball)
-os.system ("gunzip %s" % central_schema + ".tar.gz")
-os.system ("tar xvf %s" % central_schema + ".tar")
-os.system ("gunzip %s" % ucsm_schema + ".tar.gz")
-os.system ("tar xvf %s" % ucsm_schema + ".tar")
+os.system ("tar xzvf %s" % central_schema + ".tar.gz")
+os.system ("tar xzvf %s" % ucsm_schema + ".tar.gz")
 
 print """
 
