@@ -1,0 +1,7 @@
+#!/bin/bash
+VERS=0.13
+BASE=ucsql
+cd ..
+mkdir -p ${BASE}-${VERS}
+cp -R ${BASE}/* ${BASE}-${VERS}
+tar cvf ucsql-${VERS}.tar ${BASE}-${VERS}

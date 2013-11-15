@@ -70,13 +70,13 @@ if generateDS == "":
 	sys.exit(-1)
 
 schema_name_map = {
-	"stats" : { "in" : central_schema + "/stats-mgr.in.xsd", "out" : srcdir + "/stats.py"},
-	"idm" : { "in" : central_schema + "/identifier-mgr.in.xsd", "out": srcdir + "/idm.py"},
-	"ops" : { "in" : central_schema + "/operation-mgr.in.xsd", "out": srcdir + "/ops.py"},
-	"policy" : { "in" : central_schema + "/policy-mgr.in.xsd", "out" : srcdir + "/policy.py"},
-	"service" : { "in" : central_schema + "/service-reg.in.xsd", "out" : srcdir + "/service.py"},
-	"resource" : { "in" : central_schema + "/resource-mgr.in.xsd", "out" : srcdir + "/resource.py"},
-	"ucsm" : { "in" : ucsm_schema + "/UCSM-IN.xsd", "out" : srcdir + "/ucsm.py" }
+	"stats" : { "in" : central_schema + "/stats-mgr.out.xsd", "out" : srcdir + "/stats.py"},
+	"idm" : { "in" : central_schema + "/identifier-mgr.out.xsd", "out": srcdir + "/idm.py"},
+	"ops" : { "in" : central_schema + "/operation-mgr.out.xsd", "out": srcdir + "/ops.py"},
+	"policy" : { "in" : central_schema + "/policy-mgr.out.xsd", "out" : srcdir + "/policy.py"},
+	"service" : { "in" : central_schema + "/service-reg.out.xsd", "out" : srcdir + "/service.py"},
+	"resource" : { "in" : central_schema + "/resource-mgr.out.xsd", "out" : srcdir + "/resource.py"},
+	"ucsm" : { "in" : ucsm_schema + "/UCSM-OUT.xsd", "out" : srcdir + "/ucsm.py" }
 }
 
 os.system ("mkdir %s" % tmpdir)
