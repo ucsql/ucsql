@@ -1,3 +1,5 @@
+Below are some examples that illustrate 'ucsql' working on 
+some of the more common classes.
 
 On UCSM system "sfo", list Service Profile names and associated blades
 
@@ -113,3 +115,4 @@ For the "sfo" domain, list all VHBA's and their WWPNs, possibly for SAN pre-prov
         org-root/ls-STD-2/fc-fc0        20:00:00:25:B5:3A:00:CF
         org-root/ls-STD-1/fc-fc1        20:00:00:25:B5:3B:00:2F
 		[...]
+
