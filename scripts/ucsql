@@ -319,7 +319,7 @@ def ShowAll():
 			print "Error listing module", module
 
 def Help():
-	print "Command supported are:  'show table', 'select *|cols from table'"
+	print "Command supported are:  'show table|all', 'select *|cols from table'"
 	print
 	print "Hit <Enter> to see full list of objects ..."
 	sys.stdin.readline()	
@@ -375,6 +375,8 @@ def doShowStmt(pstr):
 	mtbl = TableExists(tablename)
 	if (mtbl):
 		Format_Table ( tablename, mtbl )
+	elif (tablename == "all" or tablename == "All" or tablename == "ALL"):
+		ShowAll()
 	else:
 		print "Error: \"%s\" does not exist" % tablename
 
