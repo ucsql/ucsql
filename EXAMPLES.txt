@@ -116,3 +116,19 @@ For the "sfo" domain, list all VHBA's and their WWPNs, possibly for SAN pre-prov
         org-root/ls-STD-1/fc-fc1        20:00:00:25:B5:3B:00:2F
 		[...]
 
+For the "ucsc" session, extract certain fields for Fault reporting
+
+[root@lodeve ucsql]$ ucsql -s ucsc -c "select severity, descr, cause, created, type, dn from faultInst"
+        severity        descr   cause   created type    dn
+        --------        -----   -----   ------- ----    --
+        minor   iqn pool global-default is empty        empty-pool      2013-09-20T03:03:13.010 server  org-root/iqn-pool-global-
+        minor   IP pool global-ext-mgmt is empty        empty-pool      2013-09-20T03:03:13.011 server  org-root/ip-pool-global-e
+        minor   MAC pool global-default is empty        empty-pool      2013-09-20T03:03:13.012 server  org-root/mac-pool-global-
+        minor   FC pool port-wwn-assignment global-default is empty     empty-pool      2013-09-20T03:03:13.012 server  org-root/-F10000200
+        minor   UUID pool global-default is empty       empty-pool      2013-09-20T03:03:13.013 server  org-root/uuid-pool-global
+        minor   FC pool node-wwn-assignment global-node-default is empty        empty-pool      2013-09-20T03:03:13.014 server  odefault/fault-F10000200
+        minor   IP pool global-iscsi-initiator-pool is empty    empty-pool      2013-09-20T03:03:13.015 server  org-root/ip-pool-ault-F10000210
+        major   ID is duplicated assigned       duplicated-assigned     2013-09-23T14:49:06.908 server  wwn/20:00:00:25:B5:FA:00:
+        major   ID is duplicated assigned       duplicated-assigned     2013-09-23T14:49:06.911 server  mac/00:25:B5:FA:00:00/fau
+
+
