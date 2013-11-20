@@ -15,11 +15,44 @@
 import sys
 import os
 import glob
-import pkg_resources
+
+#
+# Make sure we have what we might need
+#
+# many packages don't install properly with 'pip', so install them here via 'yum'
+#
+prereqs = ["wget ", "gcc ", "python-crypto ", "python-lxml ", "python-setuptools " ]
+print 
+print "'ucsql' requires the following packages: ", prereqs
+print 
+print "'yum' will not update any packages that are already installed."
+print
+
+print
+cmd = "yum install -y "
+for i in prereqs:
+	cmd += i
+
+print "About to run '%s'" % cmd 
+try:
+	raw_input( "Okay? [ or hit ^C ]")
+except:
+	print
+	print "Exiting ..."
+	sys.exit(-1)
+os.system(cmd)
+
+try:
+	import pkg_resources
+except ImportError:
+	print "Missing 'pkg_resources'.   Please run 'curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py | python'"
+	print "... and then rerun this install script"
+	sys.exit(-1)
 try:
 	from setuptools import setup
 except ImportError:
 	from distutils.core import setup
+
 
 name='ucsql'
 
@@ -46,28 +79,13 @@ for b in boogers:
 		sys.exit(-1)
 
 #
-# Make sure 'lxml' version is 3.2.3 before trying to run 'generateDS' 
+# Make sure 'generateDS' is installed
 #
-if pkg_resources.get_distribution('lxml').version != '3.2.3':
-	print
-	print "'ucsql' requires 'lxml' version 3.2.3.   Please download from http://lxml.de/files/lxml-3.2.3.tgz"
-	print "'ucsql' requires the 'generateDS.py' package.   Please download from https://pypi.python.org/pypi/generateDS/"
-	print 
-	print "If you have 'pip' installed, then you can simply run : "  
-	print "		'pip install lxml;  pip install generateDS'"
-	print
-	sys.exit(-1)
-
 generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
 if generateDS == "":
-	print
-	print "'ucsql' requires 'lxml' version 3.2.3.   Please download from http://lxml.de/files/lxml-3.2.3.tgz"
-	print "'ucsql' requires the 'generateDS.py' package.   Please download from https://pypi.python.org/pypi/generateDS/"
-	print
-	print "If you have 'pip' installed, then can simply run : "  
-	print "		'pip install lxml;  pip install generateDS'"
-	print
-	sys.exit(-1)
+	# Go install it.
+	os.system ("wget --no-check-certificate https://pypi.python.org/packages/source/g/generateDS/generateDS-2.12a.tar.gz#md5=69e60733668c95ae26f9f6da0576cbfc; tar xzvf generateDS-2.12a.tar.gz; cd generateDS-2.12a; python setup.py install; cd ..")
+	generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
 
 schema_name_map = {
 	"stats" : { "in" : central_schema + "/stats-mgr.out.xsd", "out" : srcdir + "/stats.py"},
@@ -95,7 +113,7 @@ so please be patient (or find a bigger system).
 """
 
 os.system ("mkdir -p %s" % srcdir)
-for s in schema_name_map.keys():
+for s in schema_name_map:
 	cmd = "python %s -o %s --member-specs=dict %s" % \
 			(generateDS, schema_name_map[s]["out"], schema_name_map[s]["in"])
 	print cmd
@@ -125,7 +143,7 @@ def find_packages(path, base="" ):
 
 setup(
 	name=name,
-	version='0.1',
+	version=0.14,
 	description='SQL-like interface for UCS Manager and UCS Central',
 	author='Cisco Systems',
 	author_email='',
@@ -137,8 +155,6 @@ setup(
 	include_package_data = True,
 	zip_safe = False,
 	install_requires=[
-		"lxml >= 3.2.3",
-		"pyparsing >= 1.5.7",
-		"pycrypto >= 2.6.1",
+                "pyparsing >= 1.5.7",
 	]
 	)
