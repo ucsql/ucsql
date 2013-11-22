@@ -15,6 +15,8 @@
 import sys
 import os
 import glob
+import multiprocessing as mp
+import subprocess
 
 #
 # Make sure we have what we might need
@@ -28,7 +30,7 @@ print
 print "This step will not update any packages that are already installed."
 print
 
-linux=os.popen("grep Linux /etc/issue").readline()
+linux=os.popen("egrep 'Linux|CentOS' /etc/issue").readline()
 if ('Red Hat' in linux or 'CentOS' in linux):
 	cmd = "yum install -y "
 elif ('SUSE' in linux):
@@ -122,6 +124,21 @@ Note:  This could take anywhere from 10 - 60 minutes depending on CPU and Memory
 so please be patient (or find a bigger system).
 
 """
+
+
+def genDS(module):
+	cmd = "python %s -o %s --member-specs=dict %s" % \
+			(generateDS, schema_name_map[module]["out"], schema_name_map[module]["in"])
+	print cmd
+	subprocess.call( cmd , shell=True)
+	return 
+
+#
+# Run the multiple generateDS jobs in parallel
+pool = mp.Pool()
+r = pool.map_async(genDS, schema_name_map)
+r.wait()
+
 
 os.system ("mkdir -p %s" % srcdir)
 for s in schema_name_map.keys():
