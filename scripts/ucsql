@@ -4,14 +4,11 @@
 #		  Intended to work against both/either UCSM or UCS Central.
 #
 # Dependencies:
-#		This was initially built on python 2.5.6
 #
 #		Assumes that the imported DME modules (from UCS or UCS Central) are Python files that have been
 #		code-generated from 'generateDS.py --member-specs=dict'.   Ex:
 #			   python `which generateDS.py` -o stats.py --member-specs=dict stats-mgr.out.xsd
 #		.xsd files are assumed to be code-generated schema files from the corresponding DME
-#
-#		... and generateDS.py depends on the lxml package ...
 #
 #		The SQL front end depends on the 'pyparsing' package and has been 
 #		shamelessly pillaged from: 
@@ -35,7 +32,7 @@
 #		- "You're on your own. Use at your own risk."
 #
 #	Seriously:
-#		- Cisco Systems Assumes absolutely no liability, nor do I.
+#		- Cisco Systems assumes absolutely no liability, nor do I.
 #
 #	TODO:
 #		- overwrite/recreate session files
