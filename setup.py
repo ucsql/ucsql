@@ -171,7 +171,7 @@ def find_packages(path, base="" ):
 
 setup(
 	name=name,
-	version=0.15,
+	version=0.16,
 	description='SQL-like interface for UCS Manager and UCS Central',
 	author='Cisco Systems',
 	author_email='',

@@ -1,5 +1,5 @@
 #!/bin/bash
-VERS=0.15
+VERS=0.16
 BASE=ucsql
 cd ..
 mkdir -p ${BASE}-${VERS}
