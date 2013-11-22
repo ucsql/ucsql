@@ -19,28 +19,39 @@ import glob
 #
 # Make sure we have what we might need
 #
-# many packages don't install properly with 'pip', so install them here via 'yum'
+# many packages don't install properly with 'pip', so install them here via 'yum' or 'zypper'
 #
-prereqs = ["wget ", "gcc ", "python-crypto ", "python-lxml ", "python-setuptools " ]
+prereqs = ["wget ", "gcc ", "python-lxml ", "python-setuptools " ]
 print 
 print "'ucsql' requires the following packages: ", prereqs
 print 
-print "'yum' will not update any packages that are already installed."
+print "This step will not update any packages that are already installed."
 print
 
-print
-cmd = "yum install -y "
+linux=os.popen("grep Linux /etc/issue").readline()
+if ('Red Hat' in linux or 'CentOS' in linux):
+	cmd = "yum install -y "
+elif ('SUSE' in linux):
+	cmd = "zypper install -y "
+else:
+	print "Sorry, but your Linux distro %s is not yet supported" % linux
+	sys.exit(-1)
+
+tcmd = cmd
 for i in prereqs:
-	cmd += i
-
-print "About to run '%s'" % cmd 
+	tcmd += i
+print "About to run '%s'" % tcmd 
 try:
 	raw_input( "Okay? [ or hit ^C ]")
 except:
 	print
 	print "Exiting ..."
 	sys.exit(-1)
-os.system(cmd)
+for i in prereqs:
+	tcmd = cmd + i
+	print tcmd
+	os.system (tcmd)
+
 
 try:
 	import pkg_resources
@@ -113,7 +124,7 @@ so please be patient (or find a bigger system).
 """
 
 os.system ("mkdir -p %s" % srcdir)
-for s in schema_name_map:
+for s in schema_name_map.keys():
 	cmd = "python %s -o %s --member-specs=dict %s" % \
 			(generateDS, schema_name_map[s]["out"], schema_name_map[s]["in"])
 	print cmd
@@ -153,8 +164,6 @@ setup(
 	scripts = ['scripts/ucsql'],
 	namespace_packages=['ucsql'],
 	include_package_data = True,
+	install_requires = [ "pyparsing", "pycrypto" ],
 	zip_safe = False,
-	install_requires=[
-                "pyparsing >= 1.5.7",
-	]
 	)

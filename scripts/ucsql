@@ -469,7 +469,7 @@ def main():
 	parser.add_option("-c", "--command", action="store", dest="command",
 	                  help="enter command on command line", metavar="COMMAND")
 	parser.add_option("-v", "--verbose",
-	                  action="store", dest="verbose", 
+	                  action="store_true", dest="verbose", 
 	                  help="print status messages to stdout")
 	parser.add_option("-s", "--session", action="store", dest="session", 
 						help="session name", metavar="COMMAND")

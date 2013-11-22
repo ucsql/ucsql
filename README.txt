@@ -17,10 +17,10 @@ Among the features and benefits of 'ucsql':
 	secure scripted commands, without interactive credential prompting
 
 The 'ucsql' package has the following dependencies:
-        - lxml >= 3.2.3         http://lxml.de
-        - pyparsing >= 1.5.7    http://pyparsing.wikispaces.com/
-        - pycrypto >= 2.6.1     https://www.dlitz.net/software/pycrypto
-        - generateDS >= 2.11a   http://www.rexx.com/~dkuhlman/generateDS.html
+        - lxml                  http://lxml.de
+        - pyparsing             http://pyparsing.wikispaces.com/
+        - pycrypto              https://www.dlitz.net/software/pycrypto
+        - generateDS            http://www.rexx.com/~dkuhlman/generateDS.html
 
 To install the 'ucsql' package, please type "sudo python setup.py install"
 
