@@ -14,46 +14,22 @@
 
 import sys
 import os
-import glob
 import multiprocessing as mp
 import subprocess
+import setup_setup
+
+if sys.version_info[0] < 2.6:
+	raise "Must be using Python 2.6 or above"
+
+# 
+# ToDO:  Figure way to skip/ignore
+#
+os.system ("python setup_setup.py")
 
 #
-# Make sure we have what we might need
+# All pre-requisite dependency installation is done in 'setup_setup.py'
+# Everything needed should already be here.
 #
-# many packages don't install properly with 'pip', so install them here via 'yum' or 'zypper'
-#
-prereqs = ["wget ", "gcc ", "python-lxml ", "python-setuptools " ]
-print 
-print "'ucsql' requires the following packages: ", prereqs
-print 
-print "This step will not update any packages that are already installed."
-print
-
-linux=os.popen("egrep 'Linux|CentOS' /etc/issue").readline()
-if ('Red Hat' in linux or 'CentOS' in linux):
-	cmd = "yum install -y "
-elif ('SUSE' in linux):
-	cmd = "zypper install -y "
-else:
-	print "Sorry, but your Linux distro %s is not yet supported" % linux
-	sys.exit(-1)
-
-tcmd = cmd
-for i in prereqs:
-	tcmd += i
-print "About to run '%s'" % tcmd 
-try:
-	raw_input( "Okay? [ or hit ^C ]")
-except:
-	print
-	print "Exiting ..."
-	sys.exit(-1)
-for i in prereqs:
-	tcmd = cmd + i
-	print tcmd
-	os.system (tcmd)
-
 
 try:
 	import pkg_resources
@@ -66,6 +42,19 @@ try:
 except ImportError:
 	from distutils.core import setup
 
+for i in prereqs:
+	dep = os.popen (prereqs[i]).read().strip()
+	if dep == "":
+		print "Missing dependency package: " , i
+		print "Please either install manually, or run 'python setup_setup.py'"
+		sys.exit(-1)
+
+generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
+if generateDS == "":
+		print "Missing dependency package: generateDS"
+		print "Please either install manually, or run 'python setup_setup.py'"
+		sys.exit(-1)
+	
 
 name='ucsql'
 
@@ -91,15 +80,6 @@ for b in boogers:
 		print "If you can, please delete the %s directory, and then rerun this setup script" % glob.glob(b)
 		sys.exit(-1)
 
-#
-# Make sure 'generateDS' is installed
-#
-generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
-if generateDS == "":
-	# Go install it.
-	os.system ("wget --no-check-certificate https://pypi.python.org/packages/source/g/generateDS/generateDS-2.12a.tar.gz#md5=69e60733668c95ae26f9f6da0576cbfc; tar xzvf generateDS-2.12a.tar.gz; cd generateDS-2.12a; python setup.py install; cd ..")
-	generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
-
 schema_name_map = {
 	"stats" : { "in" : central_schema + "/stats-mgr.out.xsd", "out" : srcdir + "/stats.py"},
 	"idm" : { "in" : central_schema + "/identifier-mgr.out.xsd", "out": srcdir + "/idm.py"},
@@ -116,6 +96,7 @@ os.system ("wget %s" % central_tarball)
 os.system ("wget %s" % ucsm_tarball)
 os.system ("tar xzvf %s" % central_schema + ".tar.gz")
 os.system ("tar xzvf %s" % ucsm_schema + ".tar.gz")
+os.system ("mkdir -p %s" % srcdir)
 
 print """
 
@@ -135,17 +116,10 @@ def genDS(module):
 
 #
 # Run the multiple generateDS jobs in parallel
+
 pool = mp.Pool()
 r = pool.map_async(genDS, schema_name_map)
 r.wait()
-
-
-os.system ("mkdir -p %s" % srcdir)
-for s in schema_name_map.keys():
-	cmd = "python %s -o %s --member-specs=dict %s" % \
-			(generateDS, schema_name_map[s]["out"], schema_name_map[s]["in"])
-	print cmd
-	os.system (cmd)
 
 os.system ("rm -rf %s" % tmpdir)
 os.chdir (cwd)
@@ -181,6 +155,6 @@ setup(
 	scripts = ['scripts/ucsql'],
 	namespace_packages=['ucsql'],
 	include_package_data = True,
-	install_requires = [ "pyparsing", "pycrypto" ],
+	install_requires = [ ],
 	zip_safe = False,
 	)
