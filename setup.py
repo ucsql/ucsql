@@ -14,6 +14,7 @@
 
 import sys
 import os
+import glob
 import multiprocessing as mp
 import subprocess
 import setup_setup
@@ -41,13 +42,6 @@ try:
 	from setuptools import setup
 except ImportError:
 	from distutils.core import setup
-
-for i in prereqs:
-	dep = os.popen (prereqs[i]).read().strip()
-	if dep == "":
-		print "Missing dependency package: " , i
-		print "Please either install manually, or run 'python setup_setup.py'"
-		sys.exit(-1)
 
 generateDS = os.popen ("which generateDS.py 2>/dev/null").read().strip()
 if generateDS == "":
