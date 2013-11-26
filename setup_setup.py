@@ -20,9 +20,13 @@ import glob
 #
 # 'linuxprereqs' includes the dependency, and the determinator.  Assumes local package installe (yum, zypper, ...)
 #
+# 'lxml' has too many dependencies to install manually as a pythonprereq.  Install via yum/zypper
+#
 linuxprereqs = { "wget" : "which wget >/dev/null 2>&1", 
 		 "gcc"  : "which gcc >/dev/null 2>&1",
-		 "python-devel" : "rpm -qa | grep python-dev" }
+		 "python-devel" : "rpm -qa | grep python-dev 2>&1",
+		 "python-lxml"  : "rpm -qa | grep lxml 2>&1"
+               }
 
 #
 # 'pythonpreqs' include the module needed and the source URL if it needs to be installed
@@ -30,10 +34,11 @@ linuxprereqs = { "wget" : "which wget >/dev/null 2>&1",
 # 'setuptools', 'pip', etc are not 100% consistent/reliable, so we'll do it by hand
 #
 
-pythonprereqs = { 'lxml' : { 'namevers' : 'lxml-3.2.3', 'wget' : 'https://pypi.python.org/packages/source/l/lxml/lxml-3.2.3.tar.gz#md5=fef47bb4ac72ac38ce778518dac42236' } ,
-		  'setuptools' : { 'namevers' : 'setuptools-1.4.1', 'wget': 'https://pypi.python.org/packages/source/s/setuptools/setuptools-1.4.1.tar.gz#md5=65bb270fbae373c26a2fa890ad907818'} ,
-		  'Crypto' : { 'namevers' : 'pycrypto-2.6.1', 'wget': 'https://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-2.6.1.tar.gz'},
-		  'pyparsing' : { 'namevers' : 'pyparsing-2.0.1', 'wget' : 'http://cheeseshop.python.org/packages/source/p/pyparsing/pyparsing-2.0.1.tar.gz' }
+pythonprereqs = { 
+#	'lxml' : { 'namevers' : 'lxml-3.2.3', 'wget' : 'https://pypi.python.org/packages/source/l/lxml/lxml-3.2.3.tar.gz#md5=fef47bb4ac72ac38ce778518dac42236' } ,
+	'setuptools' : { 'namevers' : 'setuptools-1.4.1', 'wget': 'https://pypi.python.org/packages/source/s/setuptools/setuptools-1.4.1.tar.gz#md5=65bb270fbae373c26a2fa890ad907818'} ,
+	'Crypto' : { 'namevers' : 'pycrypto-2.6.1', 'wget': 'https://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-2.6.1.tar.gz'},
+	'pyparsing' : { 'namevers' : 'pyparsing-2.0.1', 'wget' : 'http://cheeseshop.python.org/packages/source/p/pyparsing/pyparsing-2.0.1.tar.gz' }
 		}
 
 def install_this(mod):
