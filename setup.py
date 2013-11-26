@@ -18,8 +18,8 @@ import multiprocessing as mp
 import subprocess
 import setup_setup
 
-if sys.version_info[0] < 2.6:
-	raise "Must be using Python 2.6 or above"
+if sys.version_info[0] == 2 and sys.version_info[1] < 6:
+        raise "Must be using Python 2.6 or above"
 
 # 
 # ToDO:  Figure way to skip/ignore
@@ -145,7 +145,7 @@ def find_packages(path, base="" ):
 
 setup(
 	name=name,
-	version=0.16,
+	version=0.17,
 	description='SQL-like interface for UCS Manager and UCS Central',
 	author='Cisco Systems',
 	author_email='',

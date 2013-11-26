@@ -1,5 +1,5 @@
 #!/bin/bash
-VERS=`grep version setup.py |sed -e 's/version=//' -e 's/,//' -e 's/\s*//'`
+VERS=`grep version= setup.py |sed -e 's/version=//' -e 's/,//' -e 's/\s*//'`
 BASE=ucsql
 cd ..
 mkdir -p "${BASE}-${VERS}"
