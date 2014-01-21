@@ -1,7 +1,0 @@
-#!/bin/bash
-VERS=`grep version= setup.py |sed -e 's/version=//' -e 's/,//' -e 's/\s*//'`
-BASE=ucsql
-cd ..
-mkdir -p "${BASE}-${VERS}"
-cp -R ${BASE}/* ${BASE}-${VERS}
-tar cvf ucsql-${VERS}.tar ${BASE}-${VERS}
