@@ -30,5 +30,5 @@ Please refer to the EXAMPLES.txt file for examples.
 
 For questions/discussions, please see http://communities.cisco.com/ucs
 
-This is unsupported Open Source Freeware.  Have Fun, but don't hurt yourself or others.
+This is unsupported Freeware.  Have Fun, but don't hurt yourself or others.
 
