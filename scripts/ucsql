@@ -10,10 +10,7 @@
 #			   python `which generateDS.py` -o stats.py --member-specs=dict stats-mgr.out.xsd
 #		.xsd files are assumed to be code-generated schema files from the corresponding DME
 #
-#		The SQL front end depends on the 'pyparsing' package and has been 
-#		shamelessly pillaged from: 
-#			http://pyparsing.wikispaces.com/file/view/simpleSQL.py/30112834/simpleSQL.py
-# 		Copyright (c) 2003, Paul McGuire
+#		The SQL front end depends on the 'pyparsing' package 
 #
 #	History:
 #		- 	Until we have a "virtual MIT" for Central, this is the only programmatic tool in town.
@@ -36,7 +33,6 @@
 #
 #	TODO:
 #		- overwrite/recreate session files
-#		- Improve Security and Sessions 
 #		- output in csv/html format
 #		- Support "insert" commands
 #		- Support "update" commands
@@ -175,10 +171,6 @@ class ucsdme:
 #
 #	ucsqlGrammar
 #
-# Shamelessly pillaged from: http://pyparsing.wikispaces.com/file/view/simpleSQL.py/30112834/simpleSQL.py
-#
-# Copyright (c) 2003, Paul McGuire
-#
 ################################################
 
 	
@@ -206,42 +198,14 @@ class ucsqlGrammar:
 		tableName      = Word ( alphas )
 		tableNameList  = Group( delimitedList( tableName ) )
 		
-		whereExpression = Forward()
-		and_ = Keyword("and", caseless=True)
-		or_ = Keyword("or", caseless=True)
-		in_ = Keyword("in", caseless=True)
-		
-		E = CaselessLiteral("E")
-		binop = oneOf("= != < > >= <= eq ne lt le gt ge", caseless=True)
-		arithSign = Word("+-",exact=1)
-		realNum = Combine( Optional(arithSign) + ( Word( nums ) + "." + Optional( Word(nums) )  |
-											( "." + Word(nums) ) ) + 
-		            	Optional( E + Optional(arithSign) + Word(nums) ) )
-		intNum = Combine( Optional(arithSign) + Word( nums ) + 
-		            	Optional( E + Optional("+") + Word(nums) ) )
-		
-		columnRval = realNum | intNum | quotedString | columnName # need to add support for alg expressions
-		whereCondition = Group(
-		    ( columnName + binop + columnRval ) |
-		    ( columnName + in_ + "(" + delimitedList( columnRval ) + ")" ) |
-		    ( columnName + in_ + "(" + selectStmt + ")" ) |
-		    ( "(" + whereExpression + ")" )
-		    )
-		whereExpression <<= whereCondition + ZeroOrMore( ( and_ | or_ ) + whereExpression ) 
-		
 		# define the grammar
 		selectStmt      <<= ( selectToken + 
 		                   ( '*' | columnNameList ).setResultsName( "columns" ) + 
 		                   fromToken + 
-		                   tableNameList.setResultsName( "tables" ) + 
-		                   Optional( Group( CaselessLiteral("where") + whereExpression ), "" ).setResultsName("where") )
+		                   tableNameList.setResultsName( "tables" )) 
 		showStmt 		<<= ( showToken  +
 							 tableNameList.setResultsName( "tables" )) 
 		helpStmt		<<= ( helpToken )
-# 		deleteStmt      <<= ( deleteToken +
-#                            fromToken +
-#                            tableNameList.setResultsName( "tables" ) +
-#                            Optional( Group( CaselessLiteral("where") + whereExpression ), "" ).setResultsName("where") )
 
 		ucsqlGrammar = selectStmt | showStmt | helpStmt 
 
