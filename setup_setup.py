@@ -55,15 +55,30 @@ def install_this(mod):
 
 def main():
 
-    linux = os.popen("egrep 'Linux|CentOS' /etc/issue").readline()
-    if ('Red Hat' in linux or 'CentOS' in linux):
-        cmd = "yum install -y "
-    elif ('SUSE' in linux):
-        cmd = "zypper install -y "
-    else:
-        print "Sorry, but your Linux distro %s is not yet supported" % linux
-        return -1
+#      linux = os.popen("egrep 'Linux|CentOS' /etc/issue").readline()
+#      if ('Red Hat' in linux or 'CentOS' in linux):
+#          cmd = "yum install -y "
+#      elif ('SUSE' in linux):
+#          cmd = "zypper install -y "
+#      else:
+#          print "Sorry, but your Linux distro %s is not yet supported" % linux
+#          return -1
+    cmd = "yum install -y "
     
+    #
+    # Cleanup boogers and eggs from previous installs
+    #
+    boogers = ['/usr/lib64/python2.*/site-packages/ucsql*',
+		   '/usr/local/lib/python2.*/site-packages/ucsql*',
+		   '/usr/local/lib/python2.*/dist-packages/ucsql*',
+		   '/usr/lib/python2.*/site-packages/ucsql*' ]
+	
+    for b in boogers:
+        for e in glob.glob(b):
+            cmd = "rm -rf %s" % (e) 
+            print "Cleaning up from previous (bad) installation : ", cmd
+            os.system (cmd)
+
     for i in linuxprereqs:
         dep = os.system (linuxprereqs[i])
         if dep != 0:
