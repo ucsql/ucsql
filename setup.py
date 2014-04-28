@@ -139,7 +139,7 @@ def find_packages(path, base="" ):
 
 setup(
     name=name,
-    version=0.17,
+    version=0.20,
     description='SQL-like interface for UCS Manager and UCS Central',
     author='Cisco Systems',
     author_email='',
