@@ -305,7 +305,6 @@ def doSelectStmt(pstr):
     if not TableExists(mo_name):
         print "Error: \"%s\" does not exist" % mo_name
         return 
-    outp = None
     for h in MH:
         try:
             cols, rows = MH[h].resolve_class ( mo_name, pstr.getColumns() )
@@ -314,8 +313,6 @@ def doSelectStmt(pstr):
                 return 
         except:
             pass
-    if not outp:
-        print mo_name, ":  No such class"
 
 
 def doDeleteStmt(pstr):
