@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 #
 # ucsql : A simple SQL interface in to UCS DME (one or many).  
 #         Intended to work against both/either UCSM or UCS Central.
@@ -73,6 +73,9 @@ from pyparsing import Literal, CaselessLiteral, Word, Upcase, delimitedList, Opt
 # Global Handle for Multiple DMEs
 MH = {}
 
+# Global options
+options = None
+
 class ucsdme:
     def __init__ (self, url, login, passwd):
         self.url = url
@@ -124,28 +127,19 @@ class ucsdme:
         except:
             return None
         # print doc.toprettyxml()
+	rows = []	
         if (cols == "*"):
             cols = []
             node = doc.getElementsByTagName(klass)[0]
             for n in node.attributes.items():
                 cols.append(n[0])
-        hdr = ""
-        dash = ""
-        for i in cols:
-            hdr += "    " + i
-            dash += "   " + '-' * len(i)
-        header = hdr + "\n" + dash
-        oput = ""
         for node in doc.getElementsByTagName(klass):
-            if (cols == "*"):
-                cols = []
-                for n in node.attributes.items():
-                    cols.append(n[0])
-            oput += "\n"
+            row = []
             for col in cols:
-                    val = node.getAttribute(col)
-                    oput += "   " + val
-        return header + oput
+                val = node.getAttribute(col)
+		row.append(val)
+	    rows.append(row)
+        return (cols, rows)
                     
     def config_confmos (self, klass, dn, status):
         body = """
@@ -287,6 +281,25 @@ def Help():
     sys.stdin.readline()    
     ShowAll()
 
+def FormatOutput(cols, rows):
+    if (options.outputf == "csv"):
+        sep = ','
+    else:
+        sep = '	'
+    layout = ""
+    idx = 0
+    for c in cols:
+        layout = layout + "{%s:%s}%s" % (idx, len(c), sep)
+        idx += 1
+    if (options.nohdr == None):
+        print layout.format(*cols)
+        hdr = ""
+        for c in cols:
+            hdr = hdr + "-"*len(c) + sep
+        print hdr
+    for r in rows:
+        print layout.format(*r)
+
 def doSelectStmt(pstr):
     mo_name = pstr.getTable()
     if not TableExists(mo_name):
@@ -295,9 +308,9 @@ def doSelectStmt(pstr):
     outp = None
     for h in MH:
         try:
-            outp = MH[h].resolve_class ( mo_name, pstr.getColumns() )
-            if outp:
-                print outp
+            cols, rows = MH[h].resolve_class ( mo_name, pstr.getColumns() )
+            if rows:
+                FormatOutput (cols, rows)
                 return 
         except:
             pass
@@ -409,11 +422,15 @@ def doSession(session, ipaddr=None):
 def Usage():
     print """
      Usage : ucsql [-u|--ucs= IPaddr] [-s|--session= \"session-name\"]
+                   [-o|--output={tab,csv}]  [-n|--no-header]
                    [-c|--command= \"command\"] [-v|--verbose]"
 
     -u|--ucs= IPaddr           : Name or IP address of UCSM or UCS Central instanace
     -s|--session= session-name : Name of session (to be used or created)
+    -o|--output= {tab,csv}     : Output format delineation:  tab or csv
     -c|--command= command      : Run single command (non-interactive mode)
+    -v|--verbose               : Print verbose output
+    -n|--no-header             : Suppress Header formatting on output
 """
     sys.exit(-1)
 
@@ -424,7 +441,10 @@ class ucsqlShell(cmd.Cmd):
     def default(self, line):
         stmt = line.rstrip()
         if ( stmt != "" ):
-            doStmt( stmt)
+            try:
+                doStmt( stmt)
+            except:
+                pass
 
     def do_EOF(self, line):
         return True
@@ -439,9 +459,13 @@ class ucsqlShell(cmd.Cmd):
 ################################################
 
 def main():
+    global options
+
     parser = OptionParser()
     parser.add_option("-u", "--ucs", action="store", dest="ucsipaddr",
                       help="UCS IP Addr", metavar="COMMAND")
+    parser.add_option("-o", "--output", action="store", dest="outputf",
+                      help="Output Format", metavar="COMMAND")
     parser.add_option("-c", "--command", action="store", dest="command",
                       help="enter command on command line", metavar="COMMAND")
     parser.add_option("-v", "--verbose",
@@ -449,6 +473,8 @@ def main():
                       help="print status messages to stdout")
     parser.add_option("-s", "--session", action="store", dest="session", 
                         help="session name", metavar="COMMAND")
+    parser.add_option("-n", "--no-header", action="store_true", dest="nohdr",
+                        help="no header", metavar="COMMAND")
     
     (options, args) = parser.parse_args(sys.argv)
     
@@ -456,6 +482,10 @@ def main():
         cmmd = options.command
     else:
         cmmd = ""
+
+    if options.outputf:
+        if options.outputf != "tab" and options.outputf != "csv":
+             Usage()
     
     if options.ucsipaddr and not options.session:
         ip = options.ucsipaddr
